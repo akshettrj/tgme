@@ -2,7 +2,7 @@
 Telegram bot written in Bash+curl to send notifications
 
 ## Source
-This script was written originally by @marcotrosi
+This script was written originally by [@marcotrosi](https://github.com/marcotrosi)
 
 ## Screenshots
 ![sending a message](send.png)
