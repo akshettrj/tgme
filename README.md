@@ -4,6 +4,9 @@ Telegram bot written in Bash+curl to send notifications
 ## Source
 This script was written originally by [@marcotrosi](https://github.com/marcotrosi)
 
+## Features Added
+Parsing bot token and chat id from the command line arguments
+
 ## Screenshots
 ![sending a message](send.png)
 ![receiving a message](receive.png)

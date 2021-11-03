@@ -3,15 +3,25 @@
 # author: Marco Trosi
 # github: https://github.com/marcotrosi/tgme
 
+# edited by: Akshett Rai Jindal
+# github: https://github.com/akshettrj/tgme
+
 if [[ "${#}" -eq 0 ]]
 then
    echo 'NAME:'
    echo '   tgme - send messages to your Telegram account'
    echo ''
    echo 'SYNOPSIS:'
-   echo '   tgme "TEXT"'
-   echo '   tgme "TITLE" "TEXT"'
-   echo '   tgme "TITLE" "SUBTITLE" "TEXT"'
+   echo '   tgme [options] "TEXT"'
+   echo '   tgme [options] "TITLE" "TEXT"'
+   echo '   tgme [options] "TITLE" "SUBTITLE" "TEXT"'
+   echo ''
+   echo 'OPTIONS:'
+   echo '   If the options are not passed, then they will'
+   echo '   be read from the configuration files'
+   echo ''
+   echo '   -b|--bot-token          The Bot API token'
+   echo '   -c|--chat-id            The Chat ID to send message to'
    echo ''
    echo 'CONFIGURATION:'
    echo '   The configuration shall consist of two files.'
@@ -23,18 +33,50 @@ then
    exit 0
 fi
 
-if [[ "${#}" -gt 3 ]]
-then
-   echo "tgme error: too many arguments"
-   exit 3
+# if [[ "${#}" -gt 3 ]]
+# then
+#    echo "tgme error: too many arguments"
+#    exit 3
+# fi
+
+POSITIONAL_ARGS=()
+while [[ "${#}" -gt 0 ]]; do
+   key="$1"
+
+   case $key in
+      -b|--bot-token)
+         Token="$2"
+         shift # past argument
+         shift # past value
+         ;;
+      -c|--chat-id)
+         ChatID="$2"
+         shift # past argument
+         shift # past value
+         ;;
+      *)
+         # save in array for later
+         POSITIONAL_ARGS+=("$1")
+         shift # past argument
+         ;;
+   esac
+done
+
+set -- "${POSITIONAL_ARGS[@]}" # Restore positional arguments
+
+if [ -z "$Token" ] || [ -z "$ChatID" ]; then
+   CfgPath="${HOME}/.config/tgme"
+   TokenFile="${CfgPath}/token"
+   ChatIDFile="${CfgPath}/chatid"
 fi
 
-# CfgPath="${HOME}/.tgme"
-CfgPath="${HOME}/.config/tgme"
-TokenFile="${CfgPath}/token"
-ChatIDFile="${CfgPath}/chatid"
-Token="$(cat "${TokenFile}")"
-ChatID="$(cat "${ChatIDFile}")"
+if [ -z "$Token" ]; then
+   Token="$(cat "${TokenFile}")"
+fi
+if [ -z "$ChatID" ]; then
+   ChatID="$(cat "${ChatIDFile}")"
+fi
+
 Api="https://api.telegram.org/bot${Token}"
 
 if [[ "${#}" -eq 1 ]] # text
